@@ -26,7 +26,7 @@
                 android:layout_weight="1"
                 android:background="#FFFFFF"
                 android:src="?attr/actionModeCloseDrawable"
-                android:tint="#232323" />
+                app:tint="#232323" />
 
             <EditText
                 android:id="@+id/editNoteTitle"
@@ -44,7 +44,7 @@
                 android:layout_weight="1"
                 android:background="#FFFFFF"
                 android:src="?attr/actionModeShareDrawable"
-                android:tint="#232323" />
+                app:tint="#232323" />
 
         </LinearLayout>
 
@@ -76,7 +76,7 @@
                     android:layout_weight="1"
                     android:background="#DDD6D6"
                     android:src="@android:drawable/ic_menu_gallery"
-                    android:tint="#232323" />
+                    app:tint="#232323" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

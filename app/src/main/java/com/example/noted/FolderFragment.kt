@@ -1,6 +1,7 @@
 package com.example.noted
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,18 +9,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 
+private var TAG: String = "NotedApp"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [FolderFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class FolderFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private lateinit var FolderLabel: TextView
     private lateinit var FolderMenu: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "inside onCreate of FolderFragment")
         super.onCreate(savedInstanceState)
         arguments?.let {
 

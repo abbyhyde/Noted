@@ -8,15 +8,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private var TAG: String = "NotedApp"
 
-
-/**
- * A simple [Fragment] subclass.
- * Use the [NoteFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class NoteFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private lateinit var NoteLabel: TextView
