@@ -34,7 +34,7 @@ class FolderListFragment : Fragment() {
     }
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "onResume() called")
+        Log.d(TAG, "FolderListFragment onResume() called")
     }
     override fun onPause() {
         super.onPause()
@@ -64,12 +64,12 @@ class FolderListFragment : Fragment() {
         folderListRecyclerView =
             view.findViewById(R.id.folderListRecyclerView) as RecyclerView
         folderListRecyclerView.layoutManager = LinearLayoutManager(context)
-        addFolderButton = view.findViewById(R.id.addFolderButton) as ImageButton
-
-        addFolderButton.setOnClickListener{ view ->
-            // add folder
-
-        }
+//        addFolderButton = view.findViewById(R.id.addFolderButton) as ImageButton
+//
+//        addFolderButton.setOnClickListener{ view ->
+//            // add folder
+//
+//        }
 
         updateUI()
         return view
@@ -84,7 +84,7 @@ class FolderListFragment : Fragment() {
         : RecyclerView.Adapter<FolderHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
                 : FolderHolder {
-            val view = layoutInflater.inflate(R.layout.fragment_folder_list, parent, false)
+            val view = layoutInflater.inflate(R.layout.fragment_folder, parent, false)
             return FolderHolder(view)
         }
         override fun getItemCount() = folders.size
