@@ -1,6 +1,7 @@
 package com.example.noted
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,13 +10,14 @@ import android.widget.Button
 import android.widget.TextView
 import jp.wasabeef.richeditor.RichEditor
 
-
-
-
 private var TAG: String = "NotedApp"
 
 class NoteFragment : Fragment() {
+    private lateinit var NoteLabel: TextView
+    private lateinit var NoteMenu: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "inside onCreate of NoteFragment")
         super.onCreate(savedInstanceState)
     }
 

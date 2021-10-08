@@ -72,8 +72,8 @@ class NoteEditorFragment : Fragment() {
 
 
     companion object {
-
         fun newInstance() =
+
             NoteEditorFragment().apply {
                 arguments = Bundle().apply {
 
