@@ -15,15 +15,8 @@ import jp.wasabeef.richeditor.RichEditor
 private var TAG: String = "NotedApp"
 
 class NoteFragment : Fragment() {
-
-    lateinit var mEditor: RichEditor
-    lateinit var mPreview: TextView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
     }
 
     override fun onCreateView(
