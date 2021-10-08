@@ -75,6 +75,12 @@ class FolderListFragment : Fragment() {
         return view
     }
 
+    private fun updateUI() {
+        val folders = folderListViewModel.folders
+        adapter = FolderAdapter(folders)
+        folderListRecyclerView.adapter = adapter
+    }
+
     private inner class FolderHolder(view: View)
         : RecyclerView.ViewHolder(view) {
         val folderLabelView: TextView = itemView.findViewById(R.id.folderLabel)
@@ -84,22 +90,19 @@ class FolderListFragment : Fragment() {
         : RecyclerView.Adapter<FolderHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
                 : FolderHolder {
+            Log.d(TAG, "onCreateViewHolder called")
             val view = layoutInflater.inflate(R.layout.fragment_folder, parent, false)
+            Log.d(TAG, "did the thing")
             return FolderHolder(view)
         }
         override fun getItemCount() = folders.size
         override fun onBindViewHolder(holder: FolderHolder, position: Int) {
+            Log.d(TAG, "onBindViewHolder called")
             val folder = folders[position]
             holder.apply {
                 folderLabelView.text = folder.title
             }
         }
-    }
-
-    private fun updateUI() {
-        val folders = folderListViewModel.folders
-        adapter = FolderAdapter(folders)
-        folderListRecyclerView.adapter = adapter
     }
 
     companion object {

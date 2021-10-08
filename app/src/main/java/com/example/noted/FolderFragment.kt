@@ -12,7 +12,6 @@ import android.widget.TextView
 private var TAG: String = "NotedApp"
 
 class FolderFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private lateinit var FolderLabel: TextView
     private lateinit var FolderMenu: Button
 
@@ -38,12 +37,8 @@ class FolderFragment : Fragment() {
             // pop up menu
         }
 
-
-
         return view
     }
-
-
 
     companion object {
         /**

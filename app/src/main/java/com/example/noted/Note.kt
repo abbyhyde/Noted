@@ -1,5 +1,8 @@
 package com.example.noted
 
-class Note {
+import java.util.*
 
+class Note {
+    lateinit var id: UUID
+    lateinit var title: String
 }
