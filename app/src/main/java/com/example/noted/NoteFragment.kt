@@ -7,17 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import jp.wasabeef.richeditor.RichEditor
+
+
+
 
 private var TAG: String = "NotedApp"
 
 class NoteFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private lateinit var NoteLabel: TextView
-    private lateinit var NoteMenu: Button
 
+    lateinit var mEditor: RichEditor
+    lateinit var mPreview: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
     }
 
@@ -28,26 +33,15 @@ class NoteFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_note, container, false)
 
-        NoteLabel = view.findViewById(R.id.noteLabel);
-        NoteMenu = view.findViewById(R.id.noteMenu);
-
-        NoteMenu.setOnClickListener{ view: View ->
-            // pop up menu
-        }
+//        NoteMenu.setOnClickListener{ view: View ->
+//            // pop up menu
+//        }
 
         return view
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @return A new instance of fragment NoteFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
             NoteFragment().apply {
                 arguments = Bundle().apply {
 

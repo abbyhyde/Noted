@@ -1,15 +1,24 @@
 package com.example.noted
 
+import android.media.Image
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageButton
 
 private var TAG: String = "NotedApp"
 
 class NoteEditorFragment : Fragment() {
-
+    lateinit var notesListBackButton: ImageButton
+    lateinit var editNoteTitle: EditText
+    lateinit var shareButton: ImageButton
+    lateinit var editNote: EditText
+    lateinit var imageButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,26 +28,53 @@ class NoteEditorFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_note_editor, container, false)
+        val view = inflater.inflate(R.layout.fragment_note_editor, container, false)
+        notesListBackButton = view.findViewById(R.id.notesListBackButton) as ImageButton
+        editNoteTitle = view.findViewById(R.id.editNoteTitle) as EditText
+        shareButton = view.findViewById(R.id.shareButton) as ImageButton
+        editNote = view.findViewById(R.id.editNote) as EditText
+        imageButton = view.findViewById(R.id.imageButton) as ImageButton
+
+        return view
     }
 
+    override fun onStart(){
+        super.onStart()
+        val titleWatcher = object : TextWatcher {
+            override fun beforeTextChanged(
+                sequence: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+                // This space intentionally left blank
+            }
+            override fun onTextChanged(
+                sequence: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+//                note.title = sequence.toString()
+            }
+            override fun afterTextChanged(sequence: Editable?) {
+                // This one too
+            }
+        }
+        editNoteTitle.addTextChangedListener(titleWatcher)
+    }
+
+
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment NoteFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NoteFragment().apply {
+
+        fun newInstance() =
+            NoteEditorFragment().apply {
                 arguments = Bundle().apply {
 
                 }
