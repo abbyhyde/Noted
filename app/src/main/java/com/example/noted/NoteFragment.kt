@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import java.util.*
 
+private const val ARG_NOTE_TITLE = "note_title"
 private var TAG: String = "NotedApp"
 
 class NoteFragment : Fragment() {
@@ -37,20 +39,5 @@ class NoteFragment : Fragment() {
         return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @return A new instance of fragment NoteFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NoteFragment().apply {
-                arguments = Bundle().apply {
-
-                }
-            }
-    }
+    // companion object goes here
 }

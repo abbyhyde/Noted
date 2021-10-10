@@ -1,5 +1,6 @@
 package com.example.noted
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -49,6 +50,15 @@ class FolderListFragment : Fragment() {
         Log.d(TAG, "onDestroy() called")
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
+    }
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "inside onCreate of folderListFragment, Total folders: ${folderListViewModel.folders.size}")
@@ -82,26 +92,32 @@ class FolderListFragment : Fragment() {
     }
 
     private inner class FolderHolder(view: View)
-        : RecyclerView.ViewHolder(view) {
-        val folderLabelView: TextView = itemView.findViewById(R.id.folderLabel)
+        : RecyclerView.ViewHolder(view), View.OnClickListener {
+        private lateinit var folder: Folder
+        private val titleTextView: TextView = itemView.findViewById(R.id.folderLabel)
+        init {
+            itemView.setOnClickListener(this)
+        }
+        fun bind(folder: Folder) {
+            this.folder = folder
+            titleTextView.text = this.folder.title
+        }
+        override fun onClick(v: View?) {
+            callbacks?.onFolderSelected(folder.title)
+        }
     }
 
     private inner class FolderAdapter(var folders: List<Folder>)
         : RecyclerView.Adapter<FolderHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
                 : FolderHolder {
-            Log.d(TAG, "onCreateViewHolder called")
             val view = layoutInflater.inflate(R.layout.fragment_folder, parent, false)
-            Log.d(TAG, "did the thing")
             return FolderHolder(view)
         }
         override fun getItemCount() = folders.size
         override fun onBindViewHolder(holder: FolderHolder, position: Int) {
-            Log.d(TAG, "onBindViewHolder called")
             val folder = folders[position]
-            holder.apply {
-                folderLabelView.text = folder.title
-            }
+            holder.bind(folder)
         }
     }
 

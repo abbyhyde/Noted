@@ -7,13 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
+import java.util.*
 
 private var TAG: String = "NotedApp"
 
 class FolderFragment : Fragment() {
     private lateinit var FolderLabel: TextView
-    private lateinit var FolderMenu: Button
+    private lateinit var FolderMenu: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "inside onCreate of FolderFragment")
@@ -28,10 +30,9 @@ class FolderFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_note, container, false)
-
-        FolderLabel = view.findViewById(R.id.folderLabel);
-        FolderMenu = view.findViewById(R.id.folderMenu);
+        val view = inflater.inflate(R.layout.fragment_folder, container, false)
+        FolderLabel = view.findViewById(R.id.folderLabel)
+        FolderMenu = view.findViewById(R.id.folderMenu)
 
         FolderMenu.setOnClickListener{ view: View ->
             // pop up menu
@@ -40,19 +41,10 @@ class FolderFragment : Fragment() {
         return view
     }
 
+    // check this compared to NoteFragment and NoteEditorFragment about where things should go
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @return A new instance of fragment FolderFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FolderFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
+        fun newInstance(): FolderFragment {
+            return FolderFragment()
+        }
     }
 }
