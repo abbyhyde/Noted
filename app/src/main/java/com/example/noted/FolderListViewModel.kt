@@ -10,6 +10,7 @@ class FolderListViewModel : ViewModel() {
         for (i in 0 until 10) {
             val folder = Folder()
             folder.title = "Folder #$i"
+            folder.color = "purple"
             folders += folder
         }
     }

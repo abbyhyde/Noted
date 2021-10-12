@@ -1,21 +1,27 @@
 package com.example.noted
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+private const val ARG_FOLDER_TITLE = "folder_title"
 private var TAG: String = "NotedApp"
 
 class NoteListFragment : Fragment() {
     interface Callbacks{
-        fun onNoteSelected(noteName: String)
+        fun onNoteSelected(noteName: String, folderTitle: String)
+        fun backToFolderList()
     }
     private var callbacks: Callbacks? = null
     private var adapter: NoteAdapter? = null
@@ -23,6 +29,8 @@ class NoteListFragment : Fragment() {
         ViewModelProviders.of(this).get(NoteListViewModel::class.java)
     }
     private lateinit var noteListRecyclerView: RecyclerView
+    private lateinit var noteListBackButton: ImageButton
+    private lateinit var folderTitle: TextView
 
     override fun onStart() {
         super.onStart()
@@ -45,6 +53,15 @@ class NoteListFragment : Fragment() {
         Log.d(TAG, "NFL onDestroy() called")
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
+    }
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate of NoteListFragment, Total notes: ${noteListViewModel.notes.size}")
         super.onCreate(savedInstanceState)
@@ -61,6 +78,19 @@ class NoteListFragment : Fragment() {
         noteListRecyclerView =
             view.findViewById(R.id.noteListRecyclerView) as RecyclerView
         noteListRecyclerView.layoutManager = LinearLayoutManager(context)
+        noteListBackButton = view.findViewById(R.id.notesListBackButton) as ImageButton
+
+        noteListBackButton.setOnClickListener{ view: View->
+            // go back to folderList
+            Log.d(TAG, "back button pressed")
+            callbacks?.backToFolderList()
+            Log.d(TAG, "backToFolderList() called")
+        }
+
+        val folderTitle: String = arguments?.getSerializable(ARG_FOLDER_TITLE) as String
+        Log.d(TAG, "args bundle note title: $folderTitle")
+        this.folderTitle = view.findViewById(R.id.folderNameLabel) as TextView
+        this.folderTitle.text = folderTitle
 
         updateUI()
         return view
@@ -68,40 +98,60 @@ class NoteListFragment : Fragment() {
 
     private fun updateUI() {
         val notes = noteListViewModel.notes
-        adapter = NoteAdapter(notes)
+        adapter = NoteAdapter(notes, folderTitle.text.toString())
         noteListRecyclerView.adapter = adapter
     }
 
-    private inner class NoteHolder(view: View)
-        : RecyclerView.ViewHolder(view) {
-        val noteTextView: TextView = itemView.findViewById(R.id.noteLabel)
+    private inner class NoteHolder(view: View, folderTitleParam: String)
+        : RecyclerView.ViewHolder(view), View.OnClickListener {
+        private lateinit var note: Note
+        private val titleTextView: TextView = itemView.findViewById(R.id.noteLabel)
+        private val folderTitle: String = folderTitleParam
+        private val menuButton: ImageButton = itemView.findViewById(R.id.noteMenu)
+        init {
+            itemView.setOnClickListener(this)
+            menuButton.setOnClickListener() {
+                Log.d(TAG, "menu button clicked for " + titleTextView.text.toString())
+                val intent = Intent(getActivity(), NotePopup::class.java)
+                startActivity(intent)
+            }
+        }
+        fun bind(note: Note) {
+            this.note = note
+            titleTextView.text = this.note.title
+        }
+        override fun onClick(v: View?) {
+            Log.d(TAG, note.title)
+            callbacks?.onNoteSelected(note.title, folderTitle)
+
+        }
     }
 
-    private inner class NoteAdapter(var notes: List<Note>)
+    private inner class NoteAdapter(var notes: List<Note>, folderTitleParam: String)
         : RecyclerView.Adapter<NoteHolder>() {
+        private var folderTitle: String = folderTitleParam
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
                 : NoteHolder {
-            Log.d(TAG, "onCreateViewHolder called")
             val view = layoutInflater.inflate(R.layout.fragment_note, parent, false)
-            Log.d(TAG, "did the thing")
-            return NoteHolder(view)
+            return NoteHolder(view, this.folderTitle)
         }
         override fun getItemCount() = notes.size
 
         override fun onBindViewHolder(holder: NoteHolder, position: Int) {
-            Log.d(TAG, "onBindViewHolder called")
             val note = notes[position]
-            holder.apply {
-                noteTextView.text = note.title
-            }
-            Log.d(TAG, "end onBindViewHolder")
+            holder.bind(note)
         }
     }
 
     companion object {
-        fun newInstance(): NoteListFragment {
-            return NoteListFragment()
+        fun newInstance(folderTitle: String): NoteListFragment {
+            val args = Bundle().apply {
+                putSerializable(ARG_FOLDER_TITLE, folderTitle)
+            }
+            return NoteListFragment().apply {
+                arguments = args
+            }
         }
     }
 }

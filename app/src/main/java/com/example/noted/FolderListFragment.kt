@@ -1,5 +1,9 @@
 package com.example.noted
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,11 +13,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 private var TAG: String = "NotedApp"
+private const val REQUEST_CODE = 0
 
 class FolderListFragment : Fragment() {
     interface Callbacks{
@@ -49,6 +55,15 @@ class FolderListFragment : Fragment() {
         Log.d(TAG, "onDestroy() called")
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
+    }
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "inside onCreate of folderListFragment, Total folders: ${folderListViewModel.folders.size}")
@@ -58,7 +73,7 @@ class FolderListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        Log.d(TAG, "inside onCreateView of folderListFragment")
+        Log.d(TAG, "inside onCreateView of folderListFragment")
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_folder_list, container, false)
         folderListRecyclerView =
@@ -81,27 +96,77 @@ class FolderListFragment : Fragment() {
         folderListRecyclerView.adapter = adapter
     }
 
+    override fun onActivityResult(requestCode: Int,
+                                  resultCode: Int,
+                                  data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK) {
+            return
+        }
+        if (requestCode == REQUEST_CODE) {
+            val position = data?.getIntExtra(EXTRA_POSITION, 0)
+            folderListViewModel.folders[position!!].title =
+                data?.getStringExtra(EXTRA_CURRENT_TITLE) ?: "Folder #"+position.toString()
+            folderListViewModel.folders[position!!].color =
+                data?.getStringExtra(EXTRA_CURRENT_COLOR) ?: "white"
+        }
+        updateUI()
+    }
+
     private inner class FolderHolder(view: View)
-        : RecyclerView.ViewHolder(view) {
-        val folderLabelView: TextView = itemView.findViewById(R.id.folderLabel)
+        : RecyclerView.ViewHolder(view), View.OnClickListener {
+        private lateinit var folder: Folder
+        private val titleTextView: TextView = itemView.findViewById(R.id.folderLabel)
+        private val menuButton: ImageButton = itemView.findViewById(R.id.folderMenu)
+        private val folderLayout: ConstraintLayout = itemView.findViewById(R.id.folderConstraintLayout)
+        init {
+            itemView.setOnClickListener(this)
+            menuButton.setOnClickListener() {
+                Log.d(TAG, "menu button clicked for " + titleTextView.text.toString())
+                val intent = context?.let { it1 -> FolderPopup.newIntent(it1, folder.title,
+                    folder.color, folder.position) }
+                startActivityForResult(intent, REQUEST_CODE)
+            }
+        }
+        fun bind(folder: Folder) {
+            this.folder = folder
+            titleTextView.text = this.folder.title
+            when(this.folder.color) {
+                "white"-> {
+                    folderLayout.setBackgroundColor(Color.WHITE)
+                    menuButton.setBackgroundColor(Color.WHITE)
+                }
+                "gray"-> {
+                    folderLayout.setBackgroundColor(Color.GRAY)
+                    menuButton.setBackgroundColor(Color.GRAY)
+                }
+                "blue"-> {
+                    folderLayout.setBackgroundColor(Color.rgb(189,207,237))
+                    menuButton.setBackgroundColor(Color.rgb(189,207,237))
+                }
+                "purple"-> {
+                    folderLayout.setBackgroundColor(Color.rgb(209, 189, 237))
+                    menuButton.setBackgroundColor(Color.rgb(209,189,237))
+                }
+            }
+        }
+        override fun onClick(v: View?) {
+            callbacks?.onFolderSelected(folder.title)
+        }
     }
 
     private inner class FolderAdapter(var folders: List<Folder>)
         : RecyclerView.Adapter<FolderHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
                 : FolderHolder {
-            Log.d(TAG, "onCreateViewHolder called")
             val view = layoutInflater.inflate(R.layout.fragment_folder, parent, false)
-            Log.d(TAG, "did the thing")
             return FolderHolder(view)
         }
         override fun getItemCount() = folders.size
         override fun onBindViewHolder(holder: FolderHolder, position: Int) {
-            Log.d(TAG, "onBindViewHolder called")
             val folder = folders[position]
-            holder.apply {
-                folderLabelView.text = folder.title
-            }
+            folder.position = position
+            holder.bind(folder)
         }
     }
 

@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import java.util.*
 
+private const val ARG_NOTE_TITLE = "note_title"
 private var TAG: String = "NotedApp"
 
 class NoteFragment : Fragment() {
@@ -42,4 +44,5 @@ class NoteFragment : Fragment() {
                 }
             }
     }
+
 }
