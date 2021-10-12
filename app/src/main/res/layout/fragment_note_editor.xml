@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NoteFragment">
+    tools:context=".NoteEditorFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,13 +20,15 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/noteBackButton"
-                android:layout_width="5dp"
+                android:id="@+id/notesListBackButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#FFFFFF"
+                android:minHeight="48dp"
                 android:src="?attr/actionModeCloseDrawable"
-                app:tint="#232323" />
+                app:tint="#232323"
+                tools:ignore="SpeakableTextPresentCheck" />
 
             <EditText
                 android:id="@+id/editNoteTitle"
@@ -38,29 +40,21 @@
                 android:textStyle="bold" />
 
             <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="5dp"
+                android:id="@+id/shareButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#FFFFFF"
+                android:minHeight="48dp"
                 android:src="?attr/actionModeShareDrawable"
-                app:tint="#232323" />
+                app:tint="#232323"
+                tools:ignore="SpeakableTextPresentCheck" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="550dp"
-            android:orientation="horizontal">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:fillViewport="true">
 
             <LinearLayout
@@ -69,16 +63,56 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageButton
-                    android:id="@+id/imageButton2"
-                    android:layout_width="50dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#DDD6D6"
-                    android:src="@android:drawable/ic_menu_gallery"
-                    app:tint="#232323" />
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/boldButton"
+                        android:layout_width="17dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="#00FFFFFF"
+                        android:text="b"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/italicsButton"
+                        android:layout_width="10dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="#00FFFFFF"
+                        android:text="i"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="#000000"
+                        android:textStyle="italic" />
+
+                </LinearLayout>
+
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="550dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editNote"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:textAlignment="gravity"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </LinearLayout>
 
     </LinearLayout>
 </FrameLayout>

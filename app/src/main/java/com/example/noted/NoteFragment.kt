@@ -29,15 +29,20 @@ class NoteFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_note, container, false)
 
-        NoteLabel = view.findViewById(R.id.noteLabel);
-        NoteMenu = view.findViewById(R.id.noteMenu);
-
-        NoteMenu.setOnClickListener{ view: View ->
-            // pop up menu
-        }
+//        NoteMenu.setOnClickListener{ view: View ->
+//            // pop up menu
+//        }
 
         return view
     }
 
-    // companion object goes here
+    companion object {
+        fun newInstance() =
+            NoteFragment().apply {
+                arguments = Bundle().apply {
+
+                }
+            }
+    }
+
 }
