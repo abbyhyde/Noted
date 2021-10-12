@@ -1,6 +1,7 @@
 package com.example.noted
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -106,8 +107,14 @@ class NoteListFragment : Fragment() {
         private lateinit var note: Note
         private val titleTextView: TextView = itemView.findViewById(R.id.noteLabel)
         private val folderTitle: String = folderTitleParam
+        private val menuButton: ImageButton = itemView.findViewById(R.id.noteMenu)
         init {
             itemView.setOnClickListener(this)
+            menuButton.setOnClickListener() {
+                Log.d(TAG, "menu button clicked for " + titleTextView.text.toString())
+                val intent = Intent(getActivity(), NotePopup::class.java)
+                startActivity(intent)
+            }
         }
         fun bind(note: Note) {
             this.note = note

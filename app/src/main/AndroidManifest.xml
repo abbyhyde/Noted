@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Noted">
         <activity
+            android:name=".NotePopup"
+            android:exported="true" />
+        <activity
+            android:name=".FolderPopup"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
