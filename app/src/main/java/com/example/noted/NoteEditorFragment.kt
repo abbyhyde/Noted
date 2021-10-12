@@ -1,22 +1,35 @@
 package com.example.noted
 
+import OpenWeatherFetchr
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Typeface
-import android.media.Image
+import android.location.Location
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageButton
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
-import android.widget.Button
+
+import android.location.LocationManager
+import android.text.*
+import android.text.Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL
+import android.util.Log
+import android.widget.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+
 
 private var TAG: String = "NotedApp"
+val locationPermissionCode = 1
 
 class NoteEditorFragment : Fragment() {
     lateinit var notesListBackButton: ImageButton
@@ -25,12 +38,53 @@ class NoteEditorFragment : Fragment() {
     lateinit var editNote: EditText
     lateinit var boldButton: Button
     lateinit var italicsButton: Button
-    lateinit var imageButton: ImageButton
+    lateinit var location: TextView
+    lateinit var locationManager: LocationManager
+    lateinit var fusedLocationClient: FusedLocationProviderClient
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
 
+        }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context)
+
+        if ((this.context?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED)) {
+            this.activity?.let {
+                ActivityCompat.requestPermissions(
+                    it,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                    locationPermissionCode
+                )
+            }
+        }
+
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this.activity as Activity) { l: Location ->
+            if (l != null) {
+                var lat = l.getLatitude().toString()
+                var lon = l.getLongitude().toString()
+                Log.d(TAG, "lat = " + lat + " lon: " + lon)
+                val openWeatherLiveData: LiveData<LocationData> =
+                    OpenWeatherFetchr().getLocation(lat, lon)
+                openWeatherLiveData.observe(
+                    this,
+                    Observer { locationData ->
+                        Log.d(TAG, "Response received $locationData")
+                        var text = "Location: " + locationData.name
+                        location.text = text
+                    })
+            }
         }
     }
 
@@ -45,14 +99,16 @@ class NoteEditorFragment : Fragment() {
         editNoteTitle = view.findViewById(R.id.editNoteTitle) as EditText
         shareButton = view.findViewById(R.id.shareButton) as ImageButton
         editNote = view.findViewById(R.id.editNote) as EditText
-        imageButton = view.findViewById(R.id.imageButton) as ImageButton
         boldButton = view.findViewById(R.id.boldButton) as Button
         italicsButton = view.findViewById(R.id.italicsButton) as Button
+        location = view.findViewById(R.id.location) as TextView
 
         boldButton.setOnClickListener(){
+            Log.d(TAG, "bold button clicked")
             bold(it)
         }
         italicsButton.setOnClickListener(){
+            Log.d(TAG, "italics button clicked")
             italics(it)
         }
 
@@ -68,7 +124,6 @@ class NoteEditorFragment : Fragment() {
                 count: Int,
                 after: Int
             ) {
-                // This space intentionally left blank
             }
             override fun onTextChanged(
                 sequence: CharSequence?,
@@ -76,13 +131,25 @@ class NoteEditorFragment : Fragment() {
                 before: Int,
                 count: Int
             ) {
-//                note.title = sequence.toString()
             }
             override fun afterTextChanged(sequence: Editable?) {
-                // This one too
             }
         }
         editNoteTitle.addTextChangedListener(titleWatcher)
+
+        shareButton.apply{
+
+            setOnClickListener{
+                Log.d(TAG, "share button clicked")
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.setType("text/plain")
+                //var body = Html.toHtml(SpannableStringBuilder(editNote.text), TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
+                var body = editNote.text
+                var text = (editNoteTitle.text.toString()) + "\n " + location.text.toString() + "\n" + body
+                shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+                startActivity(Intent.createChooser(shareIntent, "Sharing Note"));
+            }
+        }
     }
 
     companion object {
@@ -105,4 +172,8 @@ class NoteEditorFragment : Fragment() {
         spannableString.setSpan(StyleSpan(Typeface.ITALIC), editNote.selectionStart, editNote.selectionEnd, 0)
         editNote.setText(spannableString)
     }
+
+
+
+
 }
