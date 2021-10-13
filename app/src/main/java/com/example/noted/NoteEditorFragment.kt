@@ -3,6 +3,7 @@ package com.example.noted
 
 import OpenWeatherFetchr
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,13 +18,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.text.style.StyleSpan;
 import android.location.LocationManager
+import android.os.Build
 import android.text.*
 import android.text.Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL
-import android.util.Log
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -32,14 +32,22 @@ import com.google.android.gms.location.LocationServices
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProviders
+import java.util.*
 
 
-private const val ARG_NOTE_TITLE = "note_title"
 private const val ARG_FOLDER_TITLE = "folder_title"
+private const val ARG_ID = "note_id"
+
 private var TAG: String = "NotedApp"
 val locationPermissionCode = 1
 
+
 class NoteEditorFragment : Fragment() {
+    @SuppressLint("RestrictedApi")
+
+
+    lateinit var note: Note
     lateinit var notesListBackButton: ImageButton
     lateinit var editNoteTitle: EditText
     lateinit var shareButton: ImageButton
@@ -54,6 +62,10 @@ class NoteEditorFragment : Fragment() {
         fun backToNoteList(folderTitle: String)
     }
     private var callbacks: Callbacks? = null
+    private val noteEditorViewModel: NoteEditorViewModel by lazy {
+        ViewModelProviders.of(this).get(NoteEditorViewModel::class.java)
+    }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -67,10 +79,8 @@ class NoteEditorFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.let {
-
-        }
-
+        val noteId: UUID = arguments?.getSerializable(ARG_ID) as UUID
+        noteEditorViewModel.loadNote(noteId)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context)
 
         if ((this.context?.let {
@@ -93,7 +103,7 @@ class NoteEditorFragment : Fragment() {
         }
 
         fusedLocationClient.getLastLocation().addOnSuccessListener(this.activity as Activity) { l: Location ->
-            if (l != null) {
+            if (l != null && location.text != null) {
                 var lat = l.getLatitude().toString()
                 var lon = l.getLongitude().toString()
                 Log.d(TAG, "lat = " + lat + " lon: " + lon)
@@ -108,7 +118,6 @@ class NoteEditorFragment : Fragment() {
                     })
             }
         }
-
     }
 
     override fun onCreateView(
@@ -116,7 +125,6 @@ class NoteEditorFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_note_editor, container, false)
 
         notesListBackButton = view.findViewById(R.id.notesListBackButton) as ImageButton
@@ -131,76 +139,75 @@ class NoteEditorFragment : Fragment() {
             Log.d(TAG, "bold button clicked")
             bold(it)
         }
-        italicsButton.setOnClickListener(){
+        italicsButton.setOnClickListener() {
             Log.d(TAG, "italics button clicked")
             italics(it)
-
-        val noteTitle: String = arguments?.getSerializable(ARG_NOTE_TITLE) as String
+        }
         val folderTitle: String = arguments?.getSerializable(ARG_FOLDER_TITLE) as String
-        Log.d(TAG, "args bundle note title: $noteTitle")
-        editNoteTitle.setText(noteTitle)
 
-        noteListBackButton.setOnClickListener{ view: View ->
-            // go back to notes list
-            // need folder title
+        notesListBackButton.setOnClickListener{ view: View ->
             Log.d(TAG, "note back button pressed")
             callbacks?.backToNoteList(folderTitle)
             Log.d(TAG, "backToNoteList finished")
 
         }
-
-        return view
-    }
-
-    override fun onStart(){
-        super.onStart()
-        val titleWatcher = object : TextWatcher {
-            override fun beforeTextChanged(
-                sequence: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
-            override fun onTextChanged(
-                sequence: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
-            }
-            override fun afterTextChanged(sequence: Editable?) {
-            }
-        }
-        editNoteTitle.addTextChangedListener(titleWatcher)
-
         shareButton.apply{
 
             setOnClickListener{
                 Log.d(TAG, "share button clicked")
                 val shareIntent = Intent(Intent.ACTION_SEND)
                 shareIntent.setType("text/plain")
-                //var body = Html.toHtml(SpannableStringBuilder(editNote.text), TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
                 var body = editNote.text
                 var text = (editNoteTitle.text.toString()) + "\n " + location.text.toString() + "\n" + body
                 shareIntent.putExtra(Intent.EXTRA_TEXT, text);
                 startActivity(Intent.createChooser(shareIntent, "Sharing Note"));
             }
         }
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        noteEditorViewModel.noteLiveData.observe(
+            viewLifecycleOwner,
+            Observer { note ->
+                note?.let {
+                    this.note = note
+                    updateUI()
+                }
+            })
     }
 
     private fun updateUI() {
+        editNoteTitle.setText(note.title)
+        location.text = note.location   // TODO: make location not update
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            editNote.setText(Html.fromHtml(note.body, TO_HTML_PARAGRAPH_LINES_INDIVIDUAL))
+        }else{
+            editNote.setText(Html.fromHtml(note.body))
+        }
+    }
+
+    override fun onStop(){
+        super.onStop()
+        note.title = editNoteTitle.text.toString()
+        note.location = location.text.toString()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            note.body = Html.toHtml(editNote.text, TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
+        }else{
+            note.body = Html.toHtml(editNote.text)
+        }
+        noteEditorViewModel.saveNote(note)
     }
 
     companion object {
-        fun newInstance(noteTitle: String, folderTitle: String): NoteEditorFragment {
+        fun newInstance(id: UUID): NoteEditorFragment {
             val args = Bundle().apply {
-                putSerializable(ARG_NOTE_TITLE, noteTitle)
-                putSerializable(ARG_FOLDER_TITLE, folderTitle)
+                putSerializable(ARG_ID, id)
             }
             return NoteEditorFragment().apply {
                 arguments = args
-
             }
         }
     }
@@ -216,8 +223,5 @@ class NoteEditorFragment : Fragment() {
         spannableString.setSpan(StyleSpan(Typeface.ITALIC), editNote.selectionStart, editNote.selectionEnd, 0)
         editNote.setText(spannableString)
     }
-
-
-
 
 }

@@ -33,16 +33,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/noteMenu"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="38dp"
-        android:layout_marginEnd="31dp"
-        android:layout_weight="1"
-        android:background="#FFFFFF"
-        android:src="@android:drawable/ic_menu_more"
+        android:id="@+id/deleteNoteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="29dp"
+        android:backgroundTint="#00FFFFFF"
+        android:src="@android:drawable/ic_menu_delete"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="#232323" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

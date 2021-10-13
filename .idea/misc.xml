@@ -3,6 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Evelyn/Documents/GitHub/Noted/app/src/main/res/layout/fragment_folder.xml" value="0.2" />
+        <entry key="..\:/Users/Evelyn/Documents/GitHub/Noted/app/src/main/res/layout/fragment_folder_popup.xml" value="0.21557971014492755" />
+        <entry key="..\:/Users/Evelyn/Documents/GitHub/Noted/app/src/main/res/layout/fragment_note.xml" value="0.25677083333333334" />
+        <entry key="..\:/Users/Evelyn/Documents/GitHub/Noted/app/src/main/res/layout/fragment_note_editor.xml" value="0.1" />
+        <entry key="..\:/Users/Evelyn/Documents/GitHub/Noted/app/src/main/res/layout/fragment_note_popup.xml" value="0.1296875" />
+        <entry key="..\:/Users/Evelyn/Documents/GitHub/Noted/app/src/main/res/layout/fragment_notes_list.xml" value="0.12291666666666666" />
         <entry key="..\:/Users/abbyg/AndroidStudioProjects/Noted/app/src/main/res/layout/activity_folder_popup.xml" value="0.22" />
         <entry key="..\:/Users/abbyg/AndroidStudioProjects/Noted/app/src/main/res/layout/activity_main.xml" value="0.19701086956521738" />
         <entry key="..\:/Users/abbyg/AndroidStudioProjects/Noted/app/src/main/res/layout/activity_note_popup.xml" value="0.18614130434782608" />
@@ -12,7 +18,6 @@
         <entry key="..\:/Users/abbyg/AndroidStudioProjects/Noted/app/src/main/res/layout/fragment_note_editor.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/abbyg/AndroidStudioProjects/Noted/app/src/main/res/layout/fragment_notes_list.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/abbyg/AndroidStudioProjects/Noted/app/src/main/res/menu/folder_menu.xml" value="0.20416666666666666" />
-
       </map>
     </option>
   </component>

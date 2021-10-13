@@ -1,10 +1,13 @@
 package com.example.noted
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.*
 
-class Folder {
-    lateinit var id: UUID
-    var position: Int = 0
-    lateinit var title: String
-    lateinit var color: String
+@Entity(tableName="folders")
+data class Folder (
+    @PrimaryKey var id: UUID = UUID.randomUUID(),
+    var title: String = "Folder",
+    var color: String = "white"
+){
 }
