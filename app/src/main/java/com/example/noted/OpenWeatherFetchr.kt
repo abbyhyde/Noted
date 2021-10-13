@@ -1,12 +1,10 @@
 
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.noted.LocationData
 import com.example.noted.LocationResponse
 import com.example.noted.api.RetrofitApi
-import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,19 +25,14 @@ class OpenWeatherFetchr {
 
     fun getLocation(lat: String, lon: String): LiveData<LocationData> {
         val responseLiveData: MutableLiveData<LocationData> = MutableLiveData()
-        Log.d(TAG, "sending request: ")
         val openWeatherRequest: Call<LocationResponse> = retrofitApi.fetchWeather(lat, lon, "9f9afc03c8b10d743f06b6f2b835f935")
-        Log.d(TAG, "$openWeatherRequest")
         openWeatherRequest.enqueue(object : Callback<LocationResponse> {
             override fun onFailure(call: Call<LocationResponse>, t: Throwable) {
-                Log.e(TAG, "Failed to fetch weather", t)
             }
             override fun onResponse(
                 call: Call<LocationResponse>,
                 response: Response<LocationResponse>
             ) {
-                Log.d(TAG, "response type: " + response.toString())
-                Log.d(TAG, "Response received: "+ response.body().toString())
                 val locationResponse: LocationResponse? = response.body()
                 var name : String = locationResponse?.name ?: ""
                 var data = LocationData(name)

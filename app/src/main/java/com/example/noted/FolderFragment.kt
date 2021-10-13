@@ -33,13 +33,9 @@ class FolderFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-//        Log.d(TAG, "OnCreateView called for FolderFragment")
         val view = inflater.inflate(R.layout.fragment_folder, container, false)
         FolderLabel = view.findViewById(R.id.folderLabel)
         FolderMenu = view.findViewById(R.id.folderMenu)
-//        Log.d(TAG, FolderLabel.text.toString())
-
         return view
     }
 
