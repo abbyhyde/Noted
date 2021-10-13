@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.example.noted.database.NotedDatabase
+import com.example.noted.database.migration_1_2
 import java.util.*
 import java.util.concurrent.Executors
 private var TAG: String = "NotedApp"
@@ -15,7 +16,8 @@ class NotedRepository private constructor(context: Context){
         context.applicationContext,
         NotedDatabase::class.java,
         DATABASE_NAME
-    ).build()
+    ).addMigrations(migration_1_2)
+        .build()
     private val notedDao = database.notedDao()
     private val executor = Executors.newSingleThreadExecutor()
 

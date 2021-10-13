@@ -143,11 +143,10 @@ class NoteEditorFragment : Fragment() {
             Log.d(TAG, "italics button clicked")
             italics(it)
         }
-        val folderTitle: String = arguments?.getSerializable(ARG_FOLDER_TITLE) as String
 
         notesListBackButton.setOnClickListener{ view: View ->
             Log.d(TAG, "note back button pressed")
-            callbacks?.backToNoteList(folderTitle)
+            callbacks?.backToNoteList(note.folderTitle)
             Log.d(TAG, "backToNoteList finished")
 
         }
